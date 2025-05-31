@@ -1,7 +1,7 @@
 # poc (python online compiler)
 
 ## features
-- import required libraries
+- install required packages
 - download current written python code
 
 ## sample output
