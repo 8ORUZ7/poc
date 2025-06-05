@@ -7,90 +7,260 @@
   <link rel="icon" type="image" href="https://raw.githubusercontent.com/8ORUZ7/8ORUZ7/refs/heads/images/Untitled95_20250531185702.png">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.14/codemirror.min.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.14/theme/dracula.min.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.14/codemirror.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.14/mode/python/python.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/pyodide/v0.25.1/full/pyodide.js"></script>
   <style>
     body {
       font-family: Arial, sans-serif;
-      background-color: #1e1e1e;
-      color: #ffffff;
       margin: 0;
       padding: 20px;
+      transition: background-color 0.3s, color 0.3s;
     }
+
+    .light-mode {
+      background-color: #f4f4f4;
+      color: #333;
+    }
+
+    .dark-mode {
+      background-color: #1e1e1e;
+      color: #ffffff;
+    }
+
     .container {
-        width: 1000px;
-        margin: 0 auto;
+      max-width: 1000px;
+      margin: 0 auto;
     }
 
     .actions {
-        display: flex;
-        justify-content: flex-end;
-        align-items: center;
-        margin-bottom: 10px;
-        gap: 10px;
+      display: flex;
+      justify-content: flex-start; 
+      align-items: center;
+      margin-bottom: 15px;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-right: -10px;
     }
 
-    h1, h6 {
+    .textinput {
+      border-radius: 5px solid black;
+    }
+
+    h1, h2 {
       text-align: center;
     }
 
+    #mode-toggle {
+      margin-right: auto;
+    }
     #editor {
       height: 300px;
-      width: 1000px;
-      border: 1px solid #444;
+      width: 100%;
       margin-bottom: 10px;
     }
 
     #output {
       white-space: pre-wrap;
-      background-color: #111;
-      color: #0f0;
       padding: 10px;
       border-radius: 5px;
       min-height: 100px;
+      word-wrap: break-word;
+      transition: background-color 0.3s, color 0.3s;
     }
 
     button {
       padding: 10px 20px;
       font-size: 16px;
       cursor: pointer;
-      background-color: #28a745;
-      color: white;
-      border: none;
       border-radius: 5px;
       margin-right: 10px;
+      transition: background-color 0.3s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 32px;
     }
 
-    button:hover {
-      background-color: #218838;
+    .toggle-button {
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      padding: 6px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: inherit;
+      transition: color 0.3s;
+      margin-right: 0; 
+      border-radius: 5px; 
+      width: 32px;
+      height: 32px;
+    }
+
+    .toggle-button:hover {
+      color: #ffa500; 
+    }
+
+    .toggle-button svg {
+      width: 28px;
+      height: 28px;
+      fill: currentColor;
+    }
+
+    .light-mode .toggle-button {
+      background-color: black;
+      color: rgb(255, 255, 255);
+    }
+
+    .light-mode button {
+      background-color: black;
+      color: rgb(255, 255, 255);
+    }
+
+    .light-mode .textinput {
+      background-color: black;
+      color: rgb(255, 255, 255);
+    }
+
+    .dark-mode .toggle-button {
+      background-color: #444; /* Darker grey, not green */
+      color: white;
+    }
+
+    .light-mode #output{
+      background-color: #f1f1f1;
+      color: #000000;
+      border: 2px solid #000000;
+    }
+    .light-mode .CodeMirror{
+      background-color: #f1f1f1;
+      color: #000000;
+      border: 2px solid #000000;
+    }
+   
+    .dark-mode #output {
+      background-color: #111;
+      color: #0f0;
     }
 
     input[type="text"] {
       padding: 8px;
       font-size: 16px;
       border-radius: 5px;
-      border: 1px solid #ccc;
+      border: 2px solid #000000;
       margin-right: 10px;
       width: 200px;
+      height: 13px;
+    }
+
+    svg {
+      transition: fill 0.3s;
+      width: 24px;
+      height: 24px;
+      fill: currentColor;
+    }
+
+    .light-mode svg:not(#github-logo) {
+      fill: #ffffff;
+    }
+
+    .light-mode #github-logo {
+      fill: #000000;
+    }
+
+    .dark-mode #github-logo {
+      fill: #ffffff;
+    }
+
+    .dark-mode svg {
+      fill: #fff;
+    }
+
+    @media (max-width: 768px) {
+      #mode-toggle {
+        margin-left: 0;
+        width: 100%;
+      }
+
+      #editor {
+        height: 250px;
+        align-items: center;
+        width: 100%;
+      }
+
+      input[type="text"] {
+        width: 94%;
+        margin-right: 0;
+        margin-bottom: 10px;
+      }
+
+      button {
+        width: 100%;
+        margin-right: 0;
+        margin-bottom: 10px;
+        
+      }
+
+      .actions {
+        flex-direction: column;
+        align-items: stretch;
+        justify-content: space-between;
+        width: 100%;
+      }
+
+      .container {
+        padding: 10px;
+      }
+      
+      h1 {
+        font-size: 1.5em;
+      }
+
+      #output {
+        min-height: 150px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      h1 {
+        font-size: 1.2em;
+      }
+
+      #editor {
+        height: 200px;
+      }
+
+      #output {
+        min-height: 120px;
+      }
+
+      button {
+        font-size: 14px;
+        padding: 8px 16px;
+      }
     }
   </style>
 </head>
-
 <body>
   <div class="container">
     <h1>Python Online Compiler</h1>
-    <h6>
-        <a href="https://github.com/8ORUZ7/poc" target="_blank" aria-label="GitHub Profile">
-            <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 24 24" fill="currentColor" style="color: inherit; vertical-align: middle;">
-                <path d="M12 .5C5.37.5 0 5.87 0 12.5c0 5.29 3.438 9.776 8.207 11.365.6.111.793-.261.793-.579 0-.287-.01-1.049-.016-2.058-3.338.726-4.042-1.609-4.042-1.609-.546-1.389-1.333-1.758-1.333-1.758-1.09-.745.082-.73.082-.73 1.205.084 1.84 1.237 1.84 1.237 1.07 1.834 2.809 1.304 3.492.997.108-.775.418-1.305.762-1.605-2.665-.306-5.467-1.332-5.467-5.93 0-1.31.469-2.381 1.236-3.221-.124-.303-.535-1.526.117-3.176 0 0 1.008-.322 3.3 1.23a11.52 11.52 0 0 1 3.003-.404c1.019.005 2.047.138 3.003.404 2.29-1.552 3.297-1.23 3.297-1.23.654 1.65.243 2.873.12 3.176.77.84 1.235 1.911 1.235 3.221 0 4.61-2.807 5.622-5.479 5.921.43.37.823 1.102.823 2.222 0 1.605-.015 2.898-.015 3.293 0 .321.192.694.8.576C20.565 22.273 24 17.79 24 12.5 24 5.87 18.63.5 12 .5z"/>
-            </svg>
-        </a>
-    </h6>
+  <h2>
+    <a href="https://github.com/8ORUZ7/poc" target="_blank" aria-label="GitHub Profile">
+      <svg id="github-logo" xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 24 24">
+        <path d="M12 .5C5.37.5 0 5.87 0 12.5c0 5.29 3.438 9.776 8.207 11.365.6.111.793-.261.793-.579 0-.287-.01-1.049-.016-2.058-3.338.726-4.042-1.609-4.042-1.609-.546-1.389-1.333-1.758-1.333-1.758-1.09-.745.082-.73.082-.73 1.205.084 1.84 1.237 1.84 1.237 1.07 1.834 2.809 1.304 3.492.997.108-.775.418-1.305.762-1.605-2.665-.306-5.467-1.332-5.467-5.93 0-1.31.469-2.381 1.236-3.221-.124-.303-.535-1.526.117-3.176 0 0 1.008-.322 3.3 1.23a11.52 11.52 0 0 1 3.003-.404c1.019.005 2.047.138 3.003.404 2.29-1.552 3.297-1.23 3.297-1.23.654 1.65.243 2.873.12 3.176.77.84 1.235 1.911 1.235 3.221 0 4.61-2.807 5.622-5.479 5.921.43.37.823 1.102.823 2.222 0 1.605-.015 2.898-.015 3.293 0 .321.192.694.8.576C20.565 22.273 24 17.79 24 12.5 24 5.87 18.63.5 12 .5z"/>
+      </svg>
+    </a>
+  </h2> 
     <div class="actions">
-      <button onclick="runCode()">Run Code</button>
+      <button class="toggle-button" id="mode-toggle" onclick="toggleMode()" aria-label="Toggle theme">
+        <svg id="mode-icon" viewBox="0 0 24 24"></svg></button>
+      <button class = "run" onclick="runCode()">Run</button>
     </div>
     <textarea id="editor">print("Hello, World!")</textarea>
     <br>
     <div class="actions">
-      <input type="text" id="install-package" placeholder="e.g. requests" />
+      <input type="text" class="textinput" id="install-package" placeholder="e.g. requests" />
       <button onclick="installPackage()">Install Package</button>
       <button onclick="downloadCode()">Download</button>
     </div>
@@ -98,28 +268,67 @@
     <pre id="output">Waiting for code execution...</pre>
   </div>
 
-  <!-- CodeMirror dependencies -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.14/codemirror.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.14/mode/python/python.min.js"></script>
-
-  <!-- Load Pyodide -->
-  <script src="https://cdn.jsdelivr.net/pyodide/v0.25.1/full/pyodide.js"></script>
-
   <script>
     let pyodide;
     let editor;
 
-    function setCookie(name, value, days) {
-      const expires = new Date(Date.now() + days * 864e5).toUTCString();
-      document.cookie = name + "=" + encodeURIComponent(value) + "; expires=" + expires + "; path=/";
+    const sunIcon = `
+      <circle cx="12" cy="12" r="5" />
+      <g stroke="currentColor" stroke-width="2">
+        <line x1="12" y1="1" x2="12" y2="3"/>
+        <line x1="12" y1="21" x2="12" y2="23"/>
+        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+        <line x1="1" y1="12" x2="3" y2="12"/>
+        <line x1="21" y1="12" x2="23" y2="12"/>
+        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+      </g>
+    `;
+
+    const moonIcon = `
+      <path d="M21 12.79A9 9 0 1111.21 3a7 7 0 009.79 9.79z" />
+    `;
+
+    function updateModeIcon(isDark) {
+      const icon = document.getElementById('mode-icon');
+      icon.innerHTML = isDark ? moonIcon : sunIcon;
     }
 
-    function getCookie(name) {
-      return document.cookie.split("; ").reduce((r, v) => {
-        const parts = v.split("=");
-        return parts[0] === name ? decodeURIComponent(parts[1]) : r;
-      }, "");
+    function toggleMode() {
+      const body = document.body;
+      const isDark = body.classList.toggle('dark-mode');
+      body.classList.toggle('light-mode', !isDark);
+
+      const theme = isDark ? 'dracula' : 'default';
+      editor.setOption('theme', theme);
+
+      const output = document.getElementById("output");
+      output.style.backgroundColor = isDark ? "#111" : "#f1f1f1";
+      output.style.color = isDark ? "#0f0" : "#000";
+
+      updateModeIcon(isDark);
+
+      localStorage.setItem('theme', isDark ? 'dark' : 'light');
     }
+
+    window.onload = async () => {
+      const savedTheme = localStorage.getItem('theme') || 'light';
+      document.body.classList.add(savedTheme + '-mode');
+
+      editor = CodeMirror.fromTextArea(document.getElementById("editor"), {
+        mode: "python",
+        theme: savedTheme === 'dark' ? 'dracula' : 'default',
+        lineNumbers: true,
+        indentUnit: 4,
+        tabSize: 4,
+        lineWrapping: true,
+      });
+
+      updateModeIcon(savedTheme === 'dark');
+
+      await main();
+    };
 
     async function main() {
       try {
@@ -130,42 +339,13 @@
       }
     }
 
-    window.onload = async () => {
-      editor = CodeMirror.fromTextArea(document.getElementById("editor"), {
-        mode: "python",
-        theme: "dracula",
-        lineNumbers: true,
-        indentUnit: 4,
-        tabSize: 4,
-        lineWrapping: true,
-      });
-
-      // Load from cookie
-      const savedCode = getCookie("python_code");
-      if (savedCode) editor.setValue(savedCode);
-
-      await main(); // Load Pyodide when the page loads
-    };
-
     async function runCode() {
       const code = editor.getValue();
       document.getElementById("output").textContent = "Running...";
-      setCookie("python_code", code, 30); // Save code in cookie for 30 days
-
+      setCookie("python_code", code, 30);
       try {
-        // Ensure Pyodide is ready before running code
-        if (!pyodide) {
-          document.getElementById("output").textContent = "Pyodide is still loading. Please wait.";
-          return;
-        }
-
-        await pyodide.runPythonAsync(`
-import sys
-from io import StringIO
-sys.stdout = StringIO()
-sys.stderr = sys.stdout
-        `);
-
+        if (!pyodide) return;
+        await pyodide.runPythonAsync(`import sys\nfrom io import StringIO\nsys.stdout = StringIO()\nsys.stderr = sys.stdout`);
         await pyodide.runPythonAsync(code);
         const output = await pyodide.runPythonAsync("sys.stdout.getvalue()");
         document.getElementById("output").textContent = output || "No output.";
@@ -175,25 +355,35 @@ sys.stderr = sys.stdout
     }
 
     async function installPackage() {
-      const packageName = document.getElementById("install-package").value.trim();
-      if (!packageName) return alert("Please enter a package name.");
+      const pkg = document.getElementById("install-package").value.trim();
+      if (!pkg) return alert("Enter a package name.");
       try {
-        document.getElementById("output").textContent = `Installing ${packageName}...`;
-        await pyodide.loadPackage(packageName);
-        document.getElementById("output").textContent = `Package "${packageName}" installed successfully.`;
+        document.getElementById("output").textContent = `Installing ${pkg}...`;
+        await pyodide.loadPackage(pkg);
+        document.getElementById("output").textContent = `${pkg} installed successfully.`;
       } catch (err) {
-        document.getElementById("output").textContent = `Failed to install "${packageName}": ${err}`;
+        document.getElementById("output").textContent = `Failed to install ${pkg}: ${err}`;
       }
     }
 
     function downloadCode() {
       const code = editor.getValue();
       const blob = new Blob([code], { type: "text/plain" });
+      const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
-      a.href = URL.createObjectURL(blob);
+      a.href = url;
       a.download = "code.py";
+      document.body.appendChild(a);
       a.click();
-      URL.revokeObjectURL(a.href);
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    function setCookie(cname, cvalue, exdays) {
+      const d = new Date();
+      d.setTime(d.getTime() + exdays*24*60*60*1000);
+      let expires = "expires="+ d.toUTCString();
+      document.cookie = cname + "=" + encodeURIComponent(cvalue) + ";" + expires + ";path=/";
     }
   </script>
 </body>
