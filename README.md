@@ -1,5 +1,8 @@
 # poc (python online compiler)
 
+## recent maintenance update
+- [stuck on the `Waiting for code execution...` message](https://github.com/8ORUZ7/poc/blob/main/src/documentation.md#652025---update-pyodide-v0230--v0251)
+
 ## features
 - install required packages
 - download current written python code
